@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {Gender} from './userDataContextTypes.js'
 export interface TablePaginationActionsProps {
     count: number;
     page: number;
@@ -14,4 +15,11 @@ export interface HeadCell {
     id: number | string;
     label: string;
     numeric: boolean;
+}
+export interface mapUserData {
+    id : string,
+    firstName: string;
+    lastName: string;
+    gender: Gender;
+    birthday: string;
 }

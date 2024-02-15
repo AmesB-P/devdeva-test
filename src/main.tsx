@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import UserManagement from  './pages/UserManagement.tsx'
+import CreateAndEditUser from './pages/CreateAndEditUser.tsx'
 
 const router = createBrowserRouter([
         {
@@ -11,14 +12,23 @@ const router = createBrowserRouter([
             children: [
                 {
                     path: "*",
-                    element: <Navigate to="/user_management" replace /> ,
+                    element: <Navigate to="/UserManagement" replace /> ,
                 },
                 {
-                    path: "user_management",
+                    path: "UserManagement",
                     index : true,
                     element: <UserManagement />,
                 },
-
+                {
+                    path: "CreateAndEditUser",
+                    index : false,
+                    element: <CreateAndEditUser />,
+                },
+                {
+                    path: "CreateAndEditUser/:id",
+                    index : false,
+                    element: <CreateAndEditUser />,
+                }
             ]
         }
     ]

@@ -6,7 +6,7 @@ type ContentsPageProps = {
 }
 const ContentsPage : React.FC<ContentsPageProps> = ({children}) : React.JSX.Element => {
     return (
-        <Grid item xs={12}>
+        <Grid item xs={12} >
             {children}
         </Grid>
     )
