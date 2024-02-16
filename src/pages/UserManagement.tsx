@@ -1,4 +1,4 @@
-import * as React from 'react'
+import {useState ,MouseEvent ,ChangeEvent , FC,JSX} from 'react'
 import HeaderPage from "../components/Layouts/Header/index.tsx";
 import ContentsPage from "../components/Layouts/Contents/index.js";
 import {
@@ -22,13 +22,12 @@ import {
     Paper,
     useTheme,
     IconButton,
-    TableHead
+    TableHead,
+    CircularProgress
 } from "@mui/material";
 import {TablePaginationActionsProps, HeadCell , mapUserData} from "../types/userManagementTypes.ts";
 import {Link} from 'react-router-dom'
 import {useUser} from '../hooks/userDataHook.ts'
-import {Gender} from "../types/userDataContextTypes.js";
-
 
 function TablePaginationActions(props: TablePaginationActionsProps): JSX.Element {
     const theme = useTheme();
@@ -36,20 +35,20 @@ function TablePaginationActions(props: TablePaginationActionsProps): JSX.Element
     const {count, page, rowsPerPage, onPageChange} = props;
 
     const handleFirstPageButtonClick = (
-        event: React.MouseEvent<HTMLButtonElement>,
+        event: MouseEvent<HTMLButtonElement>,
     ) => {
         onPageChange(event, 0);
     };
 
-    const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleBackButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
         onPageChange(event, page - 1);
     };
 
-    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleNextButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
         onPageChange(event, page + 1);
     };
 
-    const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleLastPageButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
         onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
     };
 
@@ -88,9 +87,18 @@ function TablePaginationActions(props: TablePaginationActionsProps): JSX.Element
 }
 
 
-const UserManagement = (): JSX.Element => {
+const UserManagement : FC = (): JSX.Element => {
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const {userData , setUserData}  = useUser();
+    const userDataContext = useUser();
+
+    if (!userDataContext) {
+        // Handle the case where userDataContext is null
+        return <CircularProgress/>;
+    }
+
+    const { userData, setUserData } = userDataContext;
 
     const headCells: readonly HeadCell[] = [
         {
@@ -130,19 +138,19 @@ const UserManagement = (): JSX.Element => {
         },
     ];
 
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
 
     const handleChangePage = (
-        event: React.MouseEvent<HTMLButtonElement> | null,
+        event: MouseEvent<HTMLButtonElement> | null,
         newPage: number,
     ) => {
+        event?.preventDefault()
         setPage(newPage);
     };
 
     //Function change limit rows per page
     const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
@@ -153,18 +161,10 @@ const UserManagement = (): JSX.Element => {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userData.length) : 0;
 
 
-    interface userDataType {
-        id : string,
-        firstName: string;
-        lastName: string;
-        gender: Gender;
-        birthday: string;
-    }
-
     const deleteUserData = (id :string) =>{
         if (id) {
-            setUserData((prevValue : userDataType[])=>{
-                const userDataIndex = prevValue.findIndex((where : userDataType) => where.id === id)
+            setUserData((prevValue)=>{
+                const userDataIndex = prevValue.findIndex((where) => where.id === id)
                 prevValue.splice(userDataIndex , 1)
                 return [
                     ...prevValue
@@ -231,9 +231,9 @@ const UserManagement = (): JSX.Element => {
                                                 <Grid container columns={12} rowSpacing={1} columnSpacing={1}>
                                                     <Grid item xs={12} lg={6}>
                                                         <Link to={`/CreateAndEditUser/${userData.id}`} state={userData}>
-                                                        <Button variant="contained" sx={{bgcolor: "#ffce00"}} fullWidth>
-                                                            Edit
-                                                        </Button>
+                                                            <Button variant="contained" sx={{bgcolor: "#ffce00"}} fullWidth>
+                                                                Edit
+                                                            </Button>
                                                         </Link>
                                                     </Grid>
 
