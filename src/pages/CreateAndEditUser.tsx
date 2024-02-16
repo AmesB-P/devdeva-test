@@ -1,4 +1,4 @@
-import {useState, FC} from 'react'
+import {useState, FC ,JSX} from 'react'
 import {useParams, useLocation, Link,useNavigate  } from "react-router-dom";
 import HeaderPage from "../components/Layouts/Header/index.js";
 import {
@@ -11,7 +11,7 @@ import {
     MenuItem,
     SelectChangeEvent,
     Dialog, DialogTitle, DialogActions,
-    Alert
+    Alert, CircularProgress
 } from '@mui/material';
 import ContentsPage from "../components/Layouts/Contents/index.js";
 import {AccountCircle} from "@mui/icons-material";
@@ -19,7 +19,6 @@ import * as React from "react";
 import {useUser} from "../hooks/userDataHook.ts";
 import moment from "moment";
 import {v4 as uuidv4} from 'uuid';
-import {Gender} from "../types/userDataContextTypes.js";
 
 const CreateAndEditUser: FC = (): JSX.Element => {
     // Get the userId param from the URL.
@@ -36,9 +35,10 @@ const CreateAndEditUser: FC = (): JSX.Element => {
         lastName: state?.lastName ? state.lastName : '',
         gender: state?.gender ? state.gender : '',
         birthday: state?.birthday ? moment(state?.birthday).format("YYYY-MM-DD") : '',
+        profileImg : ''
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent) => {
         const {name, value} = e.target;
         setFormData((prevFormData) => ({
             ...prevFormData,
@@ -46,7 +46,14 @@ const CreateAndEditUser: FC = (): JSX.Element => {
         }));
     };
 
-    const {setUserData} = useUser();
+    const userDataContext = useUser();
+
+    if (!userDataContext) {
+        // Handle the case where userDataContext is null
+        return <CircularProgress/>;
+    }
+
+    const { setUserData } = userDataContext;
 
 
     const confirmSubmit =()=>{
@@ -54,7 +61,7 @@ const CreateAndEditUser: FC = (): JSX.Element => {
             if(!formData.firstName || !formData.lastName){
                 setOpenWarningAlert(true)
             }else{
-                handleSubmit()
+                handleSubmit().then((res) => Promise.resolve(res))
             }
 
         }catch (err) {
@@ -67,18 +74,10 @@ const CreateAndEditUser: FC = (): JSX.Element => {
         setOpenWarningAlert(false); // Close the dialog
     };
 
-    interface userDataType {
-        id: string,
-        firstName: string;
-        lastName: string;
-        gender: Gender;
-        birthday: string;
-    }
-
 
     const handleSubmit = async () : Promise<void> => {
         try {
-            setUserData((prevValue: userDataType[]) => {
+            setUserData((prevValue) => {
 
                 if (id) {
                     const userDataIndex = prevValue.findIndex(where => where.id === id)
@@ -111,6 +110,7 @@ const CreateAndEditUser: FC = (): JSX.Element => {
                 lastName: '',
                 gender: '',
                 birthday: '',
+                profileImg: '',
             })
 
             // Redirect to UserManagement page
@@ -141,6 +141,7 @@ const CreateAndEditUser: FC = (): JSX.Element => {
                                 lastName: '',
                                 gender: '',
                                 birthday: '',
+                                profileImg: '',
                             })}>
                                 Add +
                             </Button>

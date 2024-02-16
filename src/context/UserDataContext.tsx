@@ -2,7 +2,7 @@ import {createContext, ReactNode, useCallback, useEffect, useState} from 'react'
 import {Gender , createUserDataTypes , userDataContextTypes} from "../types/userDataContextTypes.js";
 import {v4 as uuidv4} from 'uuid';
 import moment from "moment";
-export const UserDataContext = createContext<userDataContextTypes | null >(null)
+export const UserDataContext = createContext<userDataContextTypes | null>(null)
 
 export default function UserDataProvider({children} : {children : ReactNode}){
 
