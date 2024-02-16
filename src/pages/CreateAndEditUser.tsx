@@ -235,7 +235,7 @@ const CreateAndEditUser: FC = (): JSX.Element => {
                     <Grid item xs={12}>
                         <Grid container gap={1} justifyContent={"end"} paddingRight={15}>
                             <Grid item>
-                                <Link to={"/userManagement"}>
+                                <Link to={"/UserManagement"}>
                                     <Button variant="contained" color="error" >
                                         cancel
                                     </Button>
@@ -263,7 +263,7 @@ const CreateAndEditUser: FC = (): JSX.Element => {
                     </DialogTitle>
 
                     <DialogActions>
-                        <Link to={"/userManagement"}>
+                        <Link to={"/UserManagement"}>
                             <Button onClick={handleSubmit} color="primary">
                                 OK
                             </Button>
